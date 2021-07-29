@@ -15,10 +15,11 @@ import lombok.extern.java.Log;
 @Log
 public class CRUD {
 
-	public int insertIntoDB(Reservation res) {
+	public int insertIntoDB(Reservation res) throws SQLException {
 		int result = 0;
+		Connection con = null;
 		try {
-			Connection con = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "");
+			con = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "");
 			Statement sta = con.createStatement();
 			String insertQuery = "INSERT INTO TD_RESERVATIONS (NAME, TIME_) VALUES\r\n" + 
 			"('" + res.getName() + "', '" + res.getTime() + "');";
@@ -26,16 +27,18 @@ public class CRUD {
 			log.info(result + " rows affected");
 		} catch (SQLException e) {
 			log.severe("DB Error: " + e.getMessage());
+		} finally {
+			con.close();
 		}
 		return result;
 	};
 
-	public Reservation getFromDB(int id) {
+	public Reservation getFromDB(int id) throws SQLException {
 		Reservation output = new Reservation();
 		List<Reservation> result = new ArrayList<>();
-
+		Connection con = null;
 		try {
-			Connection con = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "");
+			con = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "");
 			String selectQuery = "SELECT ID, NAME, TIME_ FROM TD_RESERVATIONS WHERE ID = " + id;
 			new JdbcTemplate(new SingleConnectionDataSource(con, true))
 					.query(selectQuery,
@@ -48,14 +51,17 @@ public class CRUD {
 			}
 		} catch (SQLException e) {
 			log.severe("DB Error: " + e.getMessage());
+		} finally {
+			con.close();
 		}
 		return output;
 	}
 
-	public int updateIntoDB(Reservation res) {
+	public int updateIntoDB(Reservation res) throws SQLException {
 		int result = 0;
+		Connection con = null;
 		try {
-			Connection con = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "");
+			con = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "");
 			Statement sta = con.createStatement();
 			String updateQuery = "UPDATE TD_RESERVATIONS SET NAME = '" + res.getName() + "' AND TIME_ = '" + res.getTime() + "'"
 					+ "WHERE ID = " + res.getId() + ";";
@@ -63,14 +69,17 @@ public class CRUD {
 			log.info(result + " rows affected");
 		} catch (SQLException e) {
 			log.severe("DB Error: " + e.getMessage());
+		} finally {
+			con.close();
 		}
 		return result;
 	};
 
-	public int deleteFromDB(int id) {
+	public int deleteFromDB(int id) throws SQLException {
 		int result = 0;
+		Connection con = null;
 		try {
-			Connection con = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "");
+			con = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "");
 			Statement sta = con.createStatement();
 			String deleteQuery = "DELETE FROM TD_RESERVATIONS "
 					+ "WHERE ID = " + id + ";";
@@ -78,15 +87,17 @@ public class CRUD {
 			log.info(result + " rows affected");
 		} catch (SQLException e) {
 			log.severe("DB Error: " + e.getMessage());
+		} finally {
+			con.close();
 		}
 		return result;
 	};
 
-	public List<Reservation> getAllFromDB() {
+	public List<Reservation> getAllFromDB() throws SQLException {
 		List<Reservation> result = new ArrayList<>();
-
+		Connection con = null;
 		try {
-			Connection con = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "");
+			con = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "");
 			String selectQuery = "SELECT ID, NAME, TIME_ FROM TD_RESERVATIONS";
 			new JdbcTemplate(new SingleConnectionDataSource(con, true))
 					.query(selectQuery,
@@ -96,6 +107,8 @@ public class CRUD {
 			log.info("Table queried correctly");
 		} catch (SQLException e) {
 			log.severe("DB Error: " + e.getMessage());
+		} finally {
+			con.close();
 		}
 
 		return result;

@@ -22,8 +22,9 @@ public class ChallengejoseleonApplication {
 	@Bean
 	public CommandLineRunner insertToH2DB() {
 		return args -> {
+			Connection con = null;
 			try {
-				Connection con = DriverManager.getConnection("jdbc:h2:mem:testdb","sa", "");
+				con = DriverManager.getConnection("jdbc:h2:mem:testdb","sa", "");
 				Statement sta = con.createStatement();
 				String insertQuery = "INSERT INTO TD_RESERVATIONS (NAME, TIME_) VALUES\r\n" + 
 				"	('Jhon', '2021-02-28'),\r\n" + 
@@ -40,6 +41,8 @@ public class ChallengejoseleonApplication {
 				log.info("Table populated correctly");
 			} catch (Exception e) {
 				log.severe("Has been ocurred an error inserting into the table" + e.getMessage());
+			} finally {
+				con.close();
 			}
 		};
 	}

@@ -1,5 +1,6 @@
 package com.improving.joseleon.controllers;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.boot.web.servlet.error.ErrorController;
@@ -10,6 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.improving.joseleon.data.CRUD;
 import com.improving.joseleon.data.Reservation;
 
+import lombok.extern.java.Log;
+
+@Log
 @RestController
 public class ServiceController {
 	
@@ -17,7 +21,12 @@ public class ServiceController {
 
 	@GetMapping("/reservations")
 	public List<Reservation> reservation() {
-		List<Reservation> result = crud.getAllFromDB();
+		List<Reservation> result = null;
+		try {
+			result = crud.getAllFromDB();
+		} catch (SQLException e) {
+			log.severe("Has been ocurred an error getting from the table" + e.getMessage());
+		}
 		return result;
 	}
 	
